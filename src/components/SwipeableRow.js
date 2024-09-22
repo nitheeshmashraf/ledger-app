@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { TableRow, TableCell, Button, Box } from '@mui/material';
 import { useSwipeable } from 'react-swipeable';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
-const SwipeableRow = ({ transaction, onDelete, isMobile }) => {
+const SwipeableRow = ({ transaction, onDelete, isMobile, handleEdit }) => {
     const [offset, setOffset] = useState(0);
     const [showButtons, setSetShowButtons] = useState(100);
     const [swiped, setSwiped] = useState(false);
-
+    let lastTap = 0;
     const handlers = useSwipeable({
         onSwipedLeft: (eventData) => {
             console.log(eventData.absX)
@@ -22,12 +24,7 @@ const SwipeableRow = ({ transaction, onDelete, isMobile }) => {
                 setSetShowButtons(100)
             }
         },
-        onTouchMove: (event) => {
-            const deltaX = event.deltaX || 0;
-            if (deltaX < 0 && !swiped) {
-                setOffset(Math.max(deltaX, -100));
-            }
-        },
+
         preventDefaultTouchmoveEvent: true,
         trackMouse: true,
     });
@@ -38,6 +35,11 @@ const SwipeableRow = ({ transaction, onDelete, isMobile }) => {
         setOffset(0);
     };
 
+    const onEdit = ()=>{
+        handleEdit(transaction)
+        console.log(transaction)
+    }
+
     return (
         <TableRow
             {...handlers}
@@ -45,6 +47,8 @@ const SwipeableRow = ({ transaction, onDelete, isMobile }) => {
                 transform: `translateX(${offset}px)`,
                 transition: 'transform 0.3s ease-in-out',
                 position: 'relative',
+                overflow:"hidden"
+
             }}
         >
             {!isMobile && <TableCell>{transaction.date}</TableCell>}
@@ -64,24 +68,18 @@ const SwipeableRow = ({ transaction, onDelete, isMobile }) => {
                     top: 0,
                     bottom: 0,
                     display: 'flex',
-                    justifyContent: 'flex-end',
+                    justifyContent: 'space-around',
                     alignItems: 'center',
-                    backgroundColor: 'error.main',
-                    color: 'white',
+                    backgroundColor: '#e0e6e9',
                     padding: '0 16px',
                     width: '100px',
                     transform: `translateX(${showButtons}%)`,
                     transition: 'transform 0.3s ease',
-                    zIndex: 1,
+                    zIndex: 1
                 }}
             >
-                <Button
-                    onClick={handleDelete}
-                    color="inherit"
-                    sx={{ textTransform: 'none' }}
-                >
-                    Delete
-                </Button>
+                    <DeleteIcon sx={{color:'error.main'}}  onClick={handleDelete} />
+                    <EditIcon sx={{color:'#6c8763'}} onClick={onEdit}/>
             </Box>
         </TableRow>
     );

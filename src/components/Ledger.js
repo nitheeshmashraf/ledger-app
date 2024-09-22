@@ -27,7 +27,7 @@ const Ledger = () => {
     const [user] = useAuthState(auth);
     const [transactions, setTransactions] = useState([]);
     const [form, setForm] = useState({
-        type: "credit",
+        type: "debit",
         person:"",
         description: "",
         amount: "",
@@ -94,6 +94,16 @@ const Ledger = () => {
         }
     };
 
+    const handleEdit = async (form) => {
+        try{
+            form.delete('userId');
+            setForm(...form);
+            console.log(form);
+        } catch (error) {
+            console.error("Error getting transaction: ", error);
+        }
+    }
+
     const credit = transactions
         .filter((t) => t.type === "credit")
         .reduce((acc, curr) => acc + curr.amount, 0);
@@ -102,16 +112,25 @@ const Ledger = () => {
         .reduce((acc, curr) => acc + curr.amount, 0);
     const balance = credit - debit;
     const [isExpandedSummary, setIsExpandedSummary] = useState(true);
-    const [isExpandedSwipeableTable, setIsExpandedSwipeableTable] = useState(true);
+    const [isExpandedSwipeableTable, setIsExpandedSwipeableTable] = useState(false);
     const [isExpandedTransactionForm, setIsExpandedTransactionForm] = useState(false);
 
     const handleToggle = (name) => {
-        if(name==="summary")
+        if(name==="summary") {
             setIsExpandedSummary(!isExpandedSummary);
-        else if(name === "transactionForm")
+            setIsExpandedTransactionForm(false);
+            setIsExpandedSwipeableTable(false);
+        }
+        else if(name === "transactionForm") {
             setIsExpandedTransactionForm(!isExpandedTransactionForm);
-        else if(name === "transactionHistory")
+            setIsExpandedSwipeableTable(false);
+            setIsExpandedSummary(false);
+        }
+        else if(name === "transactionHistory") {
             setIsExpandedSwipeableTable(!isExpandedSwipeableTable);
+            setIsExpandedTransactionForm(false);
+            setIsExpandedSummary(false)
+        }
 
     };
 
@@ -119,7 +138,7 @@ const Ledger = () => {
         <div style={styles.container}>
             <paper style={{padding: '16px', marginBottom: '16px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Typography variant="h7">Summary</Typography>
+                    <Typography variant="h6">Summary</Typography>
                     <IconButton onClick={()=>handleToggle("summary")}>
                         <ExpandMoreIcon
                             style={{
@@ -136,7 +155,7 @@ const Ledger = () => {
             </paper>
             <paper style={{padding: '16px', marginBottom: '16px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Typography variant="h7">Add new</Typography>
+                    <Typography variant="h6">New transaction</Typography>
                     <IconButton  onClick={()=>handleToggle("transactionForm")}>
                         <ExpandMoreIcon
                             style={{
@@ -154,7 +173,7 @@ const Ledger = () => {
 
             <paper style={{padding: '16px', marginBottom: '16px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Typography variant="h7">Transaction History</Typography>
+                    <Typography variant="h6">Transaction History</Typography>
                     <IconButton onClick={()=>handleToggle("transactionHistory")}>
                         <ExpandMoreIcon
                             style={{
@@ -166,7 +185,7 @@ const Ledger = () => {
                 </div>
 
                 <Collapse in={isExpandedSwipeableTable}>
-                    <SwipeableTable transactions={transactions} handleDelete={handleDelete} config={config}/>
+                    <SwipeableTable transactions={transactions} handleDelete={handleDelete} config={config} handleEdit={handleEdit}/>
                 </Collapse>
             </paper>
 

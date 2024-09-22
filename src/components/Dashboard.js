@@ -5,7 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import Ledger from "./Ledger";
-import {Button, IconButton} from "@mui/material";
+import {Button, IconButton, Typography} from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const Dashboard = () => {
@@ -18,7 +18,7 @@ const Dashboard = () => {
     return (
         <div style={styles.container}>
             <header style={styles.header}>
-                <h1>Welcome, {user.displayName}</h1>
+                <Typography variant="h5">Hi {user.displayName},</Typography>
                 <IconButton onClick={handleSignOut} color="primary">
                     <LogoutIcon />
                 </IconButton>

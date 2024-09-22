@@ -3,7 +3,7 @@ import { Table, TableHead, TableBody, TableContainer, TableRow, TableCell, Paper
 import SwipeableRow from './SwipeableRow'; // Import the swipeable row component
 import { useTheme } from '@mui/material/styles';
 
-const SwipeableTable = ({ transactions, handleDelete }) => {
+const SwipeableTable = ({ transactions, handleDelete, handleEdit }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // For mobile screens
 
@@ -26,6 +26,7 @@ const SwipeableTable = ({ transactions, handleDelete }) => {
                             transaction={t}
                             onDelete={handleDelete}
                             isMobile={isMobile} // Pass isMobile as a prop to control view
+                            handleEdit = {handleEdit}
                         />
                     ))}
                 </TableBody>
